@@ -13,8 +13,8 @@ namespace BrickBreak
     {
         public Vector2 Speed { get; set; }
 
-        private bool _moveleft = false;
-        private bool _moveRight = false;
+        private bool moveLeft = false;
+        private bool moveRight = false;
 
         public Paddle(Texture2D Image, Vector2 Position, Color Tint,Vector2 Speed)
             : base(Image, Position, Tint)
@@ -22,25 +22,37 @@ namespace BrickBreak
             this.Speed = Speed;
         }
 
-        public void MovePaddle(KeyboardState ks)
+        public void Update(KeyboardState ks,Viewport sceen)
         {
+            //moveing the paddle
             if(ks.IsKeyDown(Keys.Left))
             {
-                _moveleft = true;
+                moveLeft = true;
             }
-            if(ks.IsKeyUp(Keys.Left))
+            else if(ks.IsKeyUp(Keys.Left))
             {
-                _moveleft = false;
+                moveLeft = false;
             }
 
-            if(_moveleft)
+            if(ks.IsKeyDown(Keys.Right))
+            {
+                moveRight = true;
+            }
+            else if(ks.IsKeyUp(Keys.Right))
+            {
+                moveRight = false;
+            }
+
+
+            if(moveLeft && Position.X > sceen.Bounds.Left)
+            {
+                Position -= Speed;
+            }
+            if(moveRight && Position.X + Image.Width < sceen.Bounds.Right)
             {
                 Position += Speed;
             }
-            else
-            {
-                Position = Position;
-            }
+           
         }
 
     }

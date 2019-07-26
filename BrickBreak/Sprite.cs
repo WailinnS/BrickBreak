@@ -13,6 +13,26 @@ namespace BrickBreak
         public Texture2D Image { get; set; }
         public Vector2 Position { get; set; }
         public Color Tint { get; set; }
+        public float X
+        {
+            get => Position.X;
+            set
+            {
+                Position = new Vector2(value, Position.Y);
+            }
+        }
+        public float Y
+        {
+            get
+            {
+                return Position.Y;
+            }
+            set
+            {
+                Position = new Vector2(Position.X, value);
+            }
+        }
+
 
         public Rectangle Hitbox
         {
