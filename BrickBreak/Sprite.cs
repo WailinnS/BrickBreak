@@ -43,14 +43,14 @@ namespace BrickBreak
         }
 
 
-        public Sprite(Texture2D Image, Vector2 Position, Color Tint)
+        public Sprite(Texture2D image, Vector2 position, Color tint)
         {
-            this.Image = Image;
-            this.Position = Position;
-            this.Tint = Tint;
+            Image = image;
+            Position = position;
+            Tint = tint;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Image, Position, Tint);
         }

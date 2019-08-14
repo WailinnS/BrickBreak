@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace BrickBreak
 {
+
     class Brick : Sprite
     {
-        public Brick(Texture2D Image, Vector2 Position,Color Tint )
-            :base(Image,Position,Tint)
+        public Brick(Texture2D image, Vector2 position, Color tint)
+            : base(image, position, tint)
         {
         }
-        
+
     }
 }
