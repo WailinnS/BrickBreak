@@ -46,5 +46,12 @@ namespace BrickBreak
 
             //}
         }
+
+        public void Setup(Viewport screen)
+        {
+            X = screen.Bounds.Center.X;
+            Y = screen.Bounds.Center.Y - 50;
+            Speed = new Vector2(0, 0);
+        }
     }
 }
