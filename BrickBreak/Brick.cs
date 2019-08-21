@@ -11,6 +11,7 @@ namespace BrickBreak
 
     class Brick : Sprite
     {
+
         public Brick(Texture2D image, Vector2 position, Color tint)
             : base(image, position, tint)
         {

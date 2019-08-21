@@ -9,13 +9,15 @@ namespace BrickBreak
         Color color1;
         Color color2;
         float currentLerpStep = 0;
-        float step = .005f;
-
-        public PowerUpBrick(Texture2D image, Vector2 position, Color tint)
+        float step = .01f;
+        public PowerType powerType;
+        
+        public PowerUpBrick(Texture2D image, Vector2 position, Color tint, int randomNum)
             : base(image, position, tint)
         {
-            color1 = Color.Lerp(Color.White, tint, 0.5f);
-            color2 = Color.Lerp(tint, Color.Black, 0.1f);
+            color1 = Color.Lerp(Color.White, tint, 0.5f); // from 
+            color2 = Color.Lerp(tint, Color.Black, 0.5f); // to
+            powerType = (PowerType)randomNum;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

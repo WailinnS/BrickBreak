@@ -18,11 +18,14 @@ namespace BrickBreak
         List<Brick> bricks = new List<Brick>();
         bool startOfGame = true;
         bool gameOver = false;
+        //int extraBallNum;
+        int extraLifeNum;
+
         //This is old an dumb...
         //string[] brickName = new string[3] { "brick1","brick2","brick3" };
 
         //new way to change the tint of the bricks.
-        Color[] colors = { Color.LightGreen, Color.HotPink, Color.LightBlue };
+        Color[] colors = { Color.Green, Color.Orange, Color.CornflowerBlue };
 
 
         SpriteFont font;
@@ -87,7 +90,7 @@ namespace BrickBreak
         private void makeBricks()
         {
             int height = 0;
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 3; i++)
             {
                 int size = 0;
                 for (int j = 0; j < 8; j++)
@@ -96,7 +99,7 @@ namespace BrickBreak
                                new Vector2(GraphicsDevice.Viewport.Bounds.Left + size, GraphicsDevice.Viewport.Y + height),
                                colors[i]));
 
-                    //bricks.Add(new Brick(Content.Load<Texture2D>(brickName[i]),
+                    //bricks.Add(new Brick(Content.Load<Texture2D>("brickTile"),
                     //           new Vector2(GraphicsDevice.Viewport.Bounds.Left + size, GraphicsDevice.Viewport.Y + height + 300),
                     //           Color.White));
 
@@ -106,9 +109,10 @@ namespace BrickBreak
             }
 
             //TO DO: power ups
-
-            //bricks[1] = new PowerUpBrick(bricks[1].Image, bricks[1].Position, bricks[1].Tint);
-            //bricks[20] = new PowerUpBrick(bricks[20].Image, bricks[20].Position, bricks[20].Tint);
+            //extraBallNum = randomNum.Next(bricks.Count );
+            extraLifeNum = randomNum.Next(bricks.Count);
+            //bricks[extraBallNum] = new PowerUpBrick(bricks[extraBallNum].Image, bricks[extraBallNum].Position, bricks[extraBallNum].Tint,randomNum.Next(2));
+            bricks[extraLifeNum] = new PowerUpBrick(bricks[extraLifeNum].Image, bricks[extraLifeNum].Position, bricks[extraLifeNum].Tint, randomNum.Next(2));
         }
 
         /// <summary>
@@ -134,7 +138,7 @@ namespace BrickBreak
             // TODO: Add your update logic here
             if (!startOfGame)
             {
-              
+
                 ball.Update(GraphicsDevice.Viewport);
 
                 paddle.Update(Keyboard.GetState(), GraphicsDevice.Viewport);
@@ -142,7 +146,7 @@ namespace BrickBreak
                 //Checks if the ball hits the bottom of the screen.
                 if (ball.Hitbox.Bottom > GraphicsDevice.Viewport.Bounds.Bottom)
                 {
-                   outOfBounds();
+                    outOfBounds();
                 }
 
                 //Check ball and paddle collision
@@ -153,33 +157,39 @@ namespace BrickBreak
                 }
 
                 //ball hits bricks
-               
-                    for (int i = 0; i < bricks.Count; i++)
+                //check for regualr bricks then power up bricks
+
+
+                for (int i = 0; i < bricks.Count; i++)
+                {
+                    if (bricks[i].Hitbox.Intersects(ball.Hitbox))
                     {
-                        if (bricks[i].Hitbox.Intersects(ball.Hitbox))
+                        ball.Speed = new Vector2(ball.Speed.X, Math.Abs(ball.Speed.Y));
+
+                        if (bricks[i] is PowerUpBrick powerUp)
                         {
-                            if(bricks.Count == 1)
-                        {
+                            switch (powerUp.powerType)
+                            {
+                                case PowerType.extraLife:
+                                    life++;
+                                    break;
+                                case PowerType.extraBall:
+                                    //In future Update...
+                                    break;
+                                default:
+                                    break;
+                            }
 
                         }
-                            ball.Speed = new Vector2(ball.Speed.X, Math.Abs(ball.Speed.Y));
-                            bricks.RemoveAt(i);
-                            score++;
-                        }
+
+                        bricks.RemoveAt(i);
+                        score++;
                     }
-                
-                //else
-                //{
-                //    if(bricks[0].Hitbox.Intersects(ball.Hitbox))
-                //    {
-                //        bricks.Remove(bricks[0]);
-                //        score++;
-                //    }
-                //}
 
-                
+                }
 
-                if (bricks.Count < 0 || life < 0)
+
+                if (bricks.Count < 1 || life <= 0)
                 {
                     gameOver = true;
                 }
@@ -224,13 +234,15 @@ namespace BrickBreak
                                   $"Your Score: {score}",
                                   new Vector2(GraphicsDevice.Viewport.Width / 3, GraphicsDevice.Viewport.Height / 2),
                                   Color.White);
-            if(Keyboard.GetState().IsKeyDown(Keys.R))
+            if (Keyboard.GetState().IsKeyDown(Keys.R))
             {
                 score = 0;
                 life = 3;
                 startOfGame = true;
                 gameOver = false;
+                bricks.Clear(); //clears the list
                 makeBricks();
+                ball.Setup(GraphicsDevice.Viewport);
             }
 
 
@@ -242,7 +254,7 @@ namespace BrickBreak
             //reset the ball position and take away life
             life--;
             ball.Setup(GraphicsDevice.Viewport);
-            if(life > 0)
+            if (life >= 1)
             {
                 startOfGame = true;
             }
@@ -270,17 +282,15 @@ namespace BrickBreak
             spriteBatch.DrawString(font, $"Score: {score}",
                                    new Vector2(GraphicsDevice.Viewport.Width - 150, GraphicsDevice.Viewport.Height - 50),
                                    Color.White);
-            spriteBatch.DrawString(font, $"Count: {bricks.Count}",new Vector2( GraphicsDevice.Viewport.Width -200, GraphicsDevice.Viewport.Height - 100), Color.White);
+
+            //debug
+            //spriteBatch.DrawString(font, $"Count: {bricks.Count}",new Vector2( GraphicsDevice.Viewport.Width -200, GraphicsDevice.Viewport.Height - 100), Color.White);
             ball.Draw(spriteBatch);
 
             paddle.Draw(spriteBatch);
 
             for (int i = 0; i < bricks.Count; i++)
             {
-                if (bricks.Count == 1)
-                {
-
-                }
                 bricks[i].Draw(spriteBatch);
             }
 
@@ -288,7 +298,7 @@ namespace BrickBreak
             {
                 waitToStart();
             }
-             if (gameOver)
+            if (gameOver)
             {
                 endScreen();
             }
